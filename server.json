@@ -2,7 +2,7 @@
   "name": "parlayapi-mcp",
   "display_name": "ParlayAPI",
   "version": "0.3.4",
-  "description": "Sports betting odds, player props, and prediction-market data from 32+ books, with a should-I-bet decision layer (verdicts, parlay grading, best-bets, Kelly staking), value-hunting (arbitrage, +EV, consensus, middles), and keyless free-tier signup for AI agents.",
+  "description": "Sports betting odds, player props, and prediction-market data from 45+ sportsbooks & sources, with a should-I-bet decision layer (verdicts, parlay grading, best-bets, Kelly staking), value-hunting (arbitrage, +EV, consensus, middles), and keyless free-tier signup for AI agents.",
   "homepage": "https://parlay-api.com/mcp",
   "documentation": "https://parlay-api.com/docs",
   "repository": "https://github.com/JacobiusMakes/parlay-api-mcp",
