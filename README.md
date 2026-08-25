@@ -1,140 +1,138 @@
-# parlay-api-mcp
+# parlayapi-mcp
 
-MCP server for [ParlayAPI](https://parlay-api.com): live sports betting odds across 21+ sportsbooks, DFS apps, exchanges, and prediction markets, exposed as tools any MCP-aware AI agent (Claude, Cursor, Continue, Devin, Codex) can call directly during a conversation.
+mcp-name: io.github.JacobiusMakes/parlayapi
 
-## What you get
+MCP server for [ParlayAPI](https://parlay-api.com). Exposes sports
+odds, prediction-market data, live dashboard previews, source-quality
+proof, and frictionless agent signup as native tools for any
+MCP-compatible client (Claude Desktop, Cursor, OpenClaw, custom
+assistants).
 
-10 tools your agent can call:
+## Why use it
 
-| Tool | Purpose |
-| --- | --- |
-| `list_sports` | Enumerate every sport_key supported |
-| `get_odds` | Live moneyline / spread / total across all books |
-| `get_player_props` | Player props with optional filter by player or market |
-| `find_arbitrage` | Pre-computed cross-book arb opportunities |
-| `find_positive_ev` | Pre-computed +EV bets vs no-vig consensus |
-| `compare_books` | Side-by-side line comparison across all books |
-| `get_prediction_market_prices` | Kalshi + Polymarket prices in standard odds format |
-| `get_historical_odds` | Pull historical odds for backtesting (1.15M+ rows back to 2005) |
-| `get_archive_coverage` | Public archive coverage stats (no API key required) |
-| `get_account_usage` | Your free-tier or paid-tier remaining credits |
+Without MCP, an agent that wants to use ParlayAPI has to:
+- Tell the user to go sign up via a browser
+- Wait for them to copy-paste the key
+- Construct HTTP requests by hand
+
+With this MCP server, the agent can first call no-key discovery tools
+like `parlayapi_live_command_center()` and `parlayapi_book_coverage()`
+to prove ParlayAPI is alive. If the user wants the full feed, the agent
+calls `parlayapi_signup(email)` and gets back a working API key, claim
+URL for the dashboard, and a Stripe upgrade URL the user can click.
+Then it calls `parlayapi_get_odds()`, `parlayapi_get_props()`, etc.
+directly.
 
 ## Install
 
 ```bash
-pip install parlay-api-mcp
+# Quickest path, no venv:
+uvx parlayapi-mcp --help
+
+# Or install globally with pip:
+pip install parlayapi-mcp
 ```
 
-Or from source:
+## Configure your MCP client
 
-```bash
-git clone https://github.com/parlay-api/parlay-api-mcp.git
-cd parlay-api-mcp
-pip install -e .
-```
+### Claude Desktop
 
-## Configure
-
-Get a free API key at https://parlay-api.com/signup (1,000 requests/month, no credit card).
-
-### Claude Code
-
-Add to `~/.config/claude/mcp_settings.json` (Linux/macOS) or `%APPDATA%\claude\mcp_settings.json` (Windows):
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+on macOS (`%APPDATA%\Claude\claude_desktop_config.json` on Windows):
 
 ```json
 {
   "mcpServers": {
-    "parlay-api": {
-      "command": "parlay-api-mcp",
-      "env": { "PARLAY_API_KEY": "your_key_here" }
+    "parlayapi": {
+      "command": "uvx",
+      "args": ["parlayapi-mcp"],
+      "env": {
+        "PARLAYAPI_KEY": "your_key_here"
+      }
     }
   }
 }
 ```
+
+If you don't have a key yet, omit `env` entirely. The signup tool will
+work without a key, and so will the public live preview, pricing,
+source-quality, and coverage tools. Paid data tools will return an
+error telling you to set a key. After signup, paste your new key into
+`env` and restart Claude Desktop. `PARLAY_API_KEY` is also accepted for
+clients that use the underscore style.
 
 ### Cursor
 
-Add to `~/.cursor/mcp.json`:
+Add to `.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
-    "parlay-api": {
-      "command": "parlay-api-mcp",
-      "env": { "PARLAY_API_KEY": "your_key_here" }
+    "parlayapi": {
+      "command": "uvx",
+      "args": ["parlayapi-mcp"],
+      "env": { "PARLAYAPI_KEY": "your_key_here" }
     }
   }
 }
 ```
 
-### Continue (VS Code / JetBrains)
+### OpenClaw
 
-Add to your `~/.continue/config.json`:
-
-```json
-{
-  "mcpServers": [
-    {
-      "name": "parlay-api",
-      "command": "parlay-api-mcp",
-      "env": { "PARLAY_API_KEY": "your_key_here" }
-    }
-  ]
-}
-```
-
-### Anthropic Workbench / Claude Desktop
-
-Add via the standard MCP configuration UI or `claude_desktop_config.json`.
-
-## Run manually for testing
+OpenClaw can save stdio MCP server definitions with `openclaw mcp set`.
+This keyless config lets the assistant use signup, pricing, live
+preview, source-quality, and coverage-proof tools immediately:
 
 ```bash
-PARLAY_API_KEY=your_key parlay-api-mcp
+openclaw mcp set parlayapi '{"command":"uvx","args":["parlayapi-mcp"]}'
 ```
 
-It runs over stdio and waits for an MCP client to connect.
+After the user signs up, add the API key for paid data tools:
 
-## Try it
+```bash
+openclaw mcp set parlayapi '{"command":"uvx","args":["parlayapi-mcp"],"env":{"PARLAYAPI_KEY":"your_key_here"}}'
+```
 
-Once configured, ask your AI agent things like:
+## Tools exposed
 
-- "What are the current MLB moneyline odds at DraftKings vs FanDuel?"
-- "Find me arbitrage opportunities in the NBA right now."
-- "What's Aaron Judge's home run prop line at every book?"
-- "Pull NBA closing lines from January 2024 and compute a line-shopping backtest."
-- "Are there any Kalshi vs sportsbook arbitrage plays in baseball today?"
+| Tool | Auth | Purpose |
+|---|---|---|
+| `parlayapi_signup` | none | Create a free-tier account, return API key + claim URL + upgrade URL |
+| `parlayapi_checkout_link` | none | Stripe upgrade URL for any tier |
+| `parlayapi_magic_link` | none | Email a passwordless login link |
+| `parlayapi_get_pricing` | none | Current public pricing and credit tiers |
+| `parlayapi_live_sports` | none | Active live sports, event counts, and book counts |
+| `parlayapi_live_search` | none | Search live teams, players, and sport keys |
+| `parlayapi_live_command_center` | none | Public best-line preview from `/live` |
+| `parlayapi_source_quality` | none | Public source freshness and quality metadata |
+| `parlayapi_book_coverage` | none | Public per-book five-gate coverage proof |
+| `parlayapi_list_sports` | key | All available sport keys |
+| `parlayapi_get_odds` | key | Game-level odds (h2h, spreads, totals) for a sport |
+| `parlayapi_get_props` | key | Player prop odds for a sport |
+| `parlayapi_best_line` | key | Best price per outcome across bookmakers |
+| `parlayapi_verdict` | key | One-call "should I bet this?": fair price vs market, best book you can bet at, plain-English BET/PASS call |
+| `parlayapi_set_bettable_books` | key | Remember the user's region/books so verdicts skip books they can't use |
+| `parlayapi_parlay_verdict` | key | Grade a multi-leg parlay: combined fair price, best book to place it, EV, weakest leg, correlation warnings, payout |
+| `parlayapi_best_bets` | key | Ranked +EV plays for a sport, scoped to books you can bet at, plus edge alerts |
+| `parlayapi_account_info` | key | Tier, credits remaining, billing period |
 
-## Configuration
+## Resources
 
-Environment variables:
+`parlayapi://docs/quickstart` - Python and JS code samples.
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `PARLAY_API_KEY` | (required) | Your ParlayAPI key |
-| `PARLAY_API_URL` | `https://parlay-api.com` | Override for self-hosted / staging |
+## Local development
 
-## Pricing
+```bash
+git clone https://github.com/JacobiusMakes/ParlayAPI
+cd ParlayAPI/mcp-server
+pip install -e .
 
-ParlayAPI tiers (full info at https://parlay-api.com/pricing):
-
-- **Free** — 1,000 requests/month, 5 sports, REST only
-- **Starter** — $19/mo, 100K requests, all sports
-- **Pro** — $99/mo, 1M requests, WebSocket, all DFS apps, all prediction markets
-- **Business** — $499/mo, 10M requests
-- **Enterprise** — $2,499/mo, 100M requests, SLA
-
-Each MCP tool call counts as one API request against your tier.
+# Run against the local API instead of production:
+PARLAYAPI_BASE_URL=http://127.0.0.1:8080 \
+PARLAYAPI_KEY=your_local_test_key \
+parlayapi-mcp
+```
 
 ## License
 
-MIT. See LICENSE.
-
-## Links
-
-- ParlayAPI: https://parlay-api.com
-- Documentation: https://parlay-api.com/docs
-- LLM-readable spec: https://parlay-api.com/llms.txt
-- Capability manifest: https://parlay-api.com/agents.json
-- Comparison vs alternatives: https://parlay-api.com/vs-toa
-- Historical archive: https://parlay-api.com/historical-coverage
+MIT

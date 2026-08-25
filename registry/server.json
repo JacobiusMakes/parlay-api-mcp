@@ -1,0 +1,31 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.JacobiusMakes/parlayapi",
+  "title": "ParlayAPI",
+  "description": "Live odds and player props from 32+ sportsbooks, plus arbitrage, +EV and bet verdicts.",
+  "version": "0.3.2",
+  "repository": {
+    "url": "https://github.com/JacobiusMakes/ParlayAPI",
+    "source": "github",
+    "subfolder": "mcp-server"
+  },
+  "websiteUrl": "https://parlay-api.com/mcp",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "parlayapi-mcp",
+      "version": "0.3.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PARLAYAPI_KEY",
+          "description": "ParlayAPI key. Optional: the public preview and the signup tool work without one, so an agent can get started and provision its own key.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

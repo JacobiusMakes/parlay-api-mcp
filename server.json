@@ -1,0 +1,81 @@
+{
+  "name": "parlayapi-mcp",
+  "display_name": "ParlayAPI",
+  "version": "0.3.4",
+  "description": "Sports betting odds, player props, and prediction-market data from 32+ books, with a should-I-bet decision layer (verdicts, parlay grading, best-bets, Kelly staking), value-hunting (arbitrage, +EV, consensus, middles), and keyless free-tier signup for AI agents.",
+  "homepage": "https://parlay-api.com/mcp",
+  "documentation": "https://parlay-api.com/docs",
+  "repository": "https://github.com/JacobiusMakes/parlay-api-mcp",
+  "license": "MIT",
+  "package": {
+    "registry": "pypi",
+    "name": "parlayapi-mcp",
+    "command": "parlayapi-mcp",
+    "uvx": "uvx parlayapi-mcp",
+    "pip": "pip install parlayapi-mcp"
+  },
+  "runtime": {
+    "type": "stdio",
+    "language": "python",
+    "requires_python": ">=3.10"
+  },
+  "environment": {
+    "PARLAYAPI_KEY": {
+      "required": false,
+      "description": "ParlayAPI API key. Public preview and signup tools work without it."
+    },
+    "PARLAY_API_KEY": {
+      "required": false,
+      "description": "Alias accepted for clients that use underscore-style API key env names."
+    },
+    "PARLAYAPI_BASE_URL": {
+      "required": false,
+      "default": "https://parlay-api.com",
+      "description": "Override for local development or staging."
+    }
+  },
+  "install_examples": {
+    "keyless": {
+      "command": "uvx",
+      "args": ["parlayapi-mcp"]
+    },
+    "with_api_key": {
+      "command": "uvx",
+      "args": ["parlayapi-mcp"],
+      "env": {
+        "PARLAYAPI_KEY": "{{your_api_key}}"
+      }
+    },
+    "openclaw_keyless": "openclaw mcp set parlayapi '{\"command\":\"uvx\",\"args\":[\"parlayapi-mcp\"]}'",
+    "openclaw_with_api_key": "openclaw mcp set parlayapi '{\"command\":\"uvx\",\"args\":[\"parlayapi-mcp\"],\"env\":{\"PARLAYAPI_KEY\":\"{{your_api_key}}\"}}'"
+  },
+  "tools": [
+    {"name": "parlayapi_signup", "auth": "none", "description": "Create a free-tier account and return API key plus claim URL."},
+    {"name": "parlayapi_checkout_link", "auth": "none", "description": "Generate a Stripe upgrade URL for any tier."},
+    {"name": "parlayapi_magic_link", "auth": "none", "description": "Email a passwordless login link."},
+    {"name": "parlayapi_get_pricing", "auth": "none", "description": "Return current public pricing and credit tiers."},
+    {"name": "parlayapi_live_sports", "auth": "none", "description": "List active live sports, event counts, and book counts."},
+    {"name": "parlayapi_live_search", "auth": "none", "description": "Search live teams, players, and sport keys."},
+    {"name": "parlayapi_live_command_center", "auth": "none", "description": "Public best-line preview from the /live dashboard."},
+    {"name": "parlayapi_source_quality", "auth": "none", "description": "Public source freshness and quality metadata."},
+    {"name": "parlayapi_book_coverage", "auth": "none", "description": "Public per-book five-gate coverage proof."},
+    {"name": "parlayapi_list_sports", "auth": "key", "description": "List supported sport keys."},
+    {"name": "parlayapi_get_odds", "auth": "key", "description": "Game-level odds across configured books."},
+    {"name": "parlayapi_get_props", "auth": "key", "description": "Player prop odds with optional filters."},
+    {"name": "parlayapi_best_line", "auth": "key", "description": "Best price per outcome across books."},
+    {"name": "parlayapi_find_arbitrage", "auth": "key", "description": "Find guaranteed-profit arbitrage opportunities across bookmakers."},
+    {"name": "parlayapi_find_ev", "auth": "key", "description": "Find positive-EV bets vs a sharp book's no-vig fair line."},
+    {"name": "parlayapi_consensus", "auth": "key", "description": "Consensus (average) odds across all bookmakers per market."},
+    {"name": "parlayapi_find_middles", "auth": "key", "description": "Find cross-book middle opportunities."},
+    {"name": "parlayapi_verdict", "auth": "key", "description": "One-call 'should I bet this?': no-vig fair price vs the market, best book (scoped to books you can bet at), and a plain-English BET/LEAN/FAIR/PASS call."},
+    {"name": "parlayapi_set_bettable_books", "auth": "key", "description": "Remember which books/region the user can bet at, so verdict recommendations skip books they can't use."},
+    {"name": "parlayapi_parlay_verdict", "auth": "key", "description": "Grade a multi-leg parlay: combined fair price, best single book to place it, EV, weakest leg, same-game correlation warnings, payout."},
+    {"name": "parlayapi_best_bets", "auth": "key", "description": "What should I bet now? Ranked +EV plays for a sport, scoped to books you can bet at, plus edge alerts."},
+    {"name": "parlayapi_account_info", "auth": "key", "description": "Tier, credits remaining, and billing period."}
+  ],
+  "categories": ["sports", "betting", "odds", "data", "mcp", "agents"],
+  "security_posture": {
+    "permissions": "Network-only stdio MCP server. No filesystem access and no local credential discovery.",
+    "auth_model": "Public preview tools are keyless. Paid data tools require an explicit ParlayAPI key in env."
+  }
+}

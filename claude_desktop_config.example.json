@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "parlayapi": {
+      "command": "uvx",
+      "args": ["parlayapi-mcp"],
+      "env": {
+        "PARLAYAPI_KEY": "REPLACE_WITH_YOUR_KEY_FROM_HTTPS_PARLAY-API_COM_DASHBOARD"
+      }
+    }
+  }
+}
