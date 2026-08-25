@@ -39,27 +39,38 @@ import sys
 from typing import Any
 
 import httpx
-from mcp.server.fastmcp import FastMCP
+
+try:  # mcp SDK >= 2.0: FastMCP became MCPServer
+    from mcp.server.mcpserver import MCPServer as _ServerClass
+
+    _SDK_V2 = True
+except ImportError:  # mcp SDK 1.x
+    from mcp.server.fastmcp import FastMCP as _ServerClass
+
+    _SDK_V2 = False
 
 
 BASE_URL = os.environ.get("PARLAY_API_URL", "https://parlay-api.com")
 API_KEY = os.environ.get("PARLAY_API_KEY", "")
 
-mcp = FastMCP(
-    name="parlay-api",
-    instructions=(
-        "ParlayAPI gives Claude/agents real-time access to sports betting "
-        "odds across 21+ sportsbooks (DraftKings, FanDuel, BetMGM, Pinnacle, "
-        "Bet365, Bovada, etc), DFS apps (PrizePicks, Underdog, Sleeper, "
-        "Pick6), exchanges (Novig, ProphetX), and prediction markets "
-        "(Kalshi, Polymarket). 38+ sports including NFL, NBA, MLB, NHL, "
-        "soccer leagues, MMA, tennis, golf, esports.\n\n"
-        "Use these tools when the user asks about odds, prop bets, "
-        "arbitrage, +EV, line shopping, or prediction-market prices. "
-        "Free-tier API key gets 1,000 requests/month at "
-        "https://parlay-api.com/signup."
-    ),
+_INSTRUCTIONS = (
+    "ParlayAPI gives Claude/agents real-time access to sports betting "
+    "odds across 21+ sportsbooks (DraftKings, FanDuel, BetMGM, Pinnacle, "
+    "Bet365, Bovada, etc), DFS apps (PrizePicks, Underdog, Sleeper, "
+    "Pick6), exchanges (Novig, ProphetX), and prediction markets "
+    "(Kalshi, Polymarket). 38+ sports including NFL, NBA, MLB, NHL, "
+    "soccer leagues, MMA, tennis, golf, esports.\n\n"
+    "Use these tools when the user asks about odds, prop bets, "
+    "arbitrage, +EV, line shopping, or prediction-market prices. "
+    "Free-tier API key gets 1,000 requests/month at "
+    "https://parlay-api.com/signup."
 )
+
+_server_kwargs: dict[str, Any] = {"name": "parlay-api", "instructions": _INSTRUCTIONS}
+if _SDK_V2:
+    _server_kwargs.update(version=__version__, website_url="https://parlay-api.com")
+
+mcp = _ServerClass(**_server_kwargs)
 
 
 def _client() -> httpx.AsyncClient:

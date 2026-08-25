@@ -29,8 +29,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://parlay-api.com"
 Documentation = "https://parlay-api.com/docs"
-Repository = "https://github.com/parlay-api/parlay-api-mcp"
-"Bug Tracker" = "https://github.com/parlay-api/parlay-api-mcp/issues"
+Repository = "https://github.com/JacobiusMakes/parlay-api-mcp"
+"Bug Tracker" = "https://github.com/JacobiusMakes/parlay-api-mcp/issues"
 
 [project.scripts]
 parlay-api-mcp = "parlay_api_mcp:main"
