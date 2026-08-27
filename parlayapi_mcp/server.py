@@ -33,6 +33,7 @@ Or after `pip install parlayapi-mcp`:
 """
 from __future__ import annotations
 
+import contextvars
 import os
 import sys
 from typing import Any
@@ -41,8 +42,13 @@ import httpx
 
 try:  # mcp SDK >= 2.0 renamed FastMCP to MCPServer and moved it
     from mcp.server.mcpserver import MCPServer as _ServerClass
+    from mcp.server.mcpserver.exceptions import ToolError as _ToolError
 except ImportError:  # mcp SDK 1.x
     from mcp.server.fastmcp import FastMCP as _ServerClass
+    try:
+        from mcp.server.fastmcp.exceptions import ToolError as _ToolError
+    except ImportError:  # very old 1.x: plain exceptions still surfaced
+        _ToolError = RuntimeError
 
 try:
     from . import __version__ as _VERSION
@@ -61,17 +67,45 @@ API_KEY = (
 mcp = _ServerClass("parlayapi")
 
 
+# Per-request API key for the remote (streamable HTTP) transport. stdio
+# clients keep configuring the key via env (API_KEY above); remote clients
+# send `Authorization: Bearer <api_key>` on every HTTP request and the
+# middleware in build_streamable_http_app() stashes it here. Contextvars
+# propagate into the anyio task that handles the request AND into the
+# worker thread that runs sync tool functions, so a plain module global
+# would race across concurrent requests but this does not.
+_REQUEST_API_KEY: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "parlayapi_request_api_key", default=""
+)
+
+
+def set_request_api_key(key: str) -> contextvars.Token:
+    """Bind an API key to the current request context. Returns the reset token."""
+    return _REQUEST_API_KEY.set((key or "").strip())
+
+
+def current_api_key() -> str:
+    """The key for THIS call: per-request (remote HTTP) first, env (stdio) second."""
+    return _REQUEST_API_KEY.get() or API_KEY
+
+
 def _client(needs_key: bool = True) -> httpx.Client:
     headers = {"User-Agent": f"parlayapi-mcp/{_VERSION}"}
     if needs_key:
-        if not API_KEY:
-            raise RuntimeError(
-                "PARLAYAPI_KEY environment variable is not set. "
-                "PARLAY_API_KEY is also accepted. "
-                "Either set it in your MCP server config, or call "
-                "parlayapi_signup() to create a free-tier key."
+        key = current_api_key()
+        if not key:
+            # ToolError, not RuntimeError: SDK 2.x masks unexpected tool
+            # exceptions ("Error executing tool ..."), and this message IS
+            # the product surface that tells a keyless agent what to do.
+            raise _ToolError(
+                "No ParlayAPI key available for this call. "
+                "Remote (HTTP) clients: send your key on every request as "
+                "'Authorization: Bearer <api_key>'. "
+                "stdio clients: set PARLAYAPI_KEY (or PARLAY_API_KEY) in your "
+                "MCP server config. "
+                "No key yet? Call parlayapi_signup() to create a free-tier key."
             )
-        headers["X-API-KEY"] = API_KEY
+        headers["X-API-KEY"] = key
     return httpx.Client(base_url=BASE_URL, headers=headers, timeout=20.0)
 
 
@@ -722,6 +756,84 @@ const events = await r.json();
 console.log(events);
 ```
 """
+
+
+# ── Remote transport (streamable HTTP) ────────────────────────────────
+#
+# The stdio transport above is what `parlayapi-mcp` runs for Claude
+# Desktop / Cursor. This section is the remote counterpart: the same 22
+# tools served over MCP streamable HTTP, mounted inside the ParlayAPI
+# FastAPI app (see src/api/mcp_http.py in the monorepo) at /mcp/http.
+#
+# Auth model:
+#   * Requests carrying `Authorization: Bearer <api_key>` (or X-API-KEY)
+#     have the key bound to the request context; every keyed tool then
+#     forwards it upstream as X-API-KEY exactly as the stdio server does.
+#   * Keyless requests still get the discovery subset (signup, pricing,
+#     live previews, source quality, book coverage) and a clear error
+#     from keyed tools telling them how to authenticate.
+
+
+class _BearerKeyASGIMiddleware:
+    """Pull the API key off each HTTP request into the request contextvar."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            await self.app(scope, receive, send)
+            return
+        key = ""
+        fallback = ""
+        for name, value in scope.get("headers", []):
+            lowered = name.lower()
+            if lowered == b"authorization":
+                text = value.decode("latin-1").strip()
+                if text.lower().startswith("bearer "):
+                    key = text[7:].strip()
+            elif lowered == b"x-api-key":
+                fallback = value.decode("latin-1").strip()
+        token = set_request_api_key(key or fallback)
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            _REQUEST_API_KEY.reset(token)
+
+
+def build_streamable_http_app(*, json_response: bool = True):
+    """Build the remote MCP ASGI app (streamable HTTP transport).
+
+    Returns an ASGI callable serving the MCP endpoint at its root path,
+    meant to be mounted by a host app (FastAPI/Starlette) at /mcp/http.
+
+    IMPORTANT lifecycle contract: the host must run
+    `mcp.session_manager.run()` (an async context manager) inside its own
+    lifespan, because Starlette does not propagate lifespans to mounted
+    sub-apps. src/api/mcp_http.py does exactly that.
+
+    Stateless mode: every request is self-contained (no server-side
+    session pinning), which is what lets the per-request Authorization
+    header work: the key set by the middleware propagates via contextvars
+    into the anyio task (and worker thread) that executes the tool for
+    that specific request. Stateful mode would run tools in a long-lived
+    session task created by the FIRST request, breaking per-request keys.
+    """
+    from mcp.server.transport_security import TransportSecuritySettings
+
+    inner = mcp.streamable_http_app(
+        streamable_http_path="/",
+        stateless_http=True,
+        json_response=json_response,
+        # The SDK default auto-enables DNS-rebinding protection with a
+        # localhost-only Host allowlist, which would 421 every request
+        # arriving as Host: parlay-api.com. We sit behind the edge proxy
+        # that terminates TLS for the real hostname, so disable it.
+        transport_security=TransportSecuritySettings(
+            enable_dns_rebinding_protection=False
+        ),
+    )
+    return _BearerKeyASGIMiddleware(inner)
 
 
 # ── Entry point ───────────────────────────────────────────────────────
