@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "parlayapi-mcp",
+  "description": "Sports betting odds, player props, and prediction market data from 30+ sportsbooks, with a should-I-bet decision layer: verdicts, parlay grading, arbitrage, +EV, and consensus. 22 tools, 9 of them keyless. Free tier: 1,000 credits per month, no card required.",
+  "author": "JacobiusMakes",
+  "license": "MIT",
+  "keywords": ["sports", "betting", "odds", "player-props", "arbitrage", "mcp", "prediction-markets"]
+}
