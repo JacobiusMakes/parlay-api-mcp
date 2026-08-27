@@ -1,0 +1,8 @@
+[project]
+name = "parlayapi-mcp-bundle"
+version = "0.3.5"
+description = "Claude Desktop MCP bundle for parlayapi-mcp"
+requires-python = ">=3.10"
+dependencies = [
+    "parlayapi-mcp==0.3.5",
+]

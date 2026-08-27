@@ -23,7 +23,24 @@ URL for the dashboard, and a Stripe upgrade URL the user can click.
 Then it calls `parlayapi_get_odds()`, `parlayapi_get_props()`, etc.
 directly.
 
-## Install
+## Install in Claude Desktop (one click)
+
+Download
+[parlayapi-mcp-0.3.5.mcpb](https://github.com/JacobiusMakes/parlay-api-mcp/releases/download/v0.3.5/parlayapi-mcp-0.3.5.mcpb)
+and open it (double-click, or drag it onto Claude Desktop). Claude
+Desktop unpacks the bundle and runs the server with its managed uv
+runtime, so no terminal or Python setup is needed.
+
+The API key field in the install dialog is optional. Leave it blank to
+start keyless: signup, pricing, live previews, source quality, and
+coverage tools work immediately, and the `parlayapi_signup` tool can
+create a free key (1,000 credits/mo, no card) without leaving the chat.
+Add the key later any time under Settings, Extensions, ParlayAPI.
+
+The bundle source lives in [`mcpb/`](mcpb/). Rebuild it with
+`npx @anthropic-ai/mcpb pack mcpb/`.
+
+## Install (manual, any MCP client)
 
 ```bash
 # Quickest path, no venv:

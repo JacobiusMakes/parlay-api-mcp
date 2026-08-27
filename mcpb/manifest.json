@@ -1,0 +1,73 @@
+{
+  "manifest_version": "0.4",
+  "name": "parlayapi-mcp",
+  "display_name": "ParlayAPI Sports Odds",
+  "version": "0.3.5",
+  "description": "Real-time sports odds from 30+ sportsbooks: best lines, one-call bet verdicts, arbitrage, +EV, and keyless live previews.",
+  "long_description": "MCP server for [ParlayAPI](https://parlay-api.com), a real-time sports odds API.\n\nWorks out of the box with no API key: signup, pricing, live previews, source-quality proof, and per-book coverage tools are keyless. Odds and analytics tools (odds, props, best line, verdicts, arbitrage, +EV, middles) need a key. The free tier is 1,000 credits per month with no card required; the `parlayapi_signup` tool can create an account and return a working key without leaving the chat. Pricing for paid tiers lives at https://parlay-api.com/pricing.\n\nHistorical coverage runs from 2005 for game lines, with 30M+ prop closing lines since 2022.",
+  "author": {
+    "name": "Jacob",
+    "email": "jacob@parlay-api.com",
+    "url": "https://parlay-api.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JacobiusMakes/parlay-api-mcp"
+  },
+  "homepage": "https://parlay-api.com",
+  "documentation": "https://parlay-api.com/docs",
+  "support": "https://github.com/JacobiusMakes/parlay-api-mcp/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "uv",
+    "entry_point": "src/server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}", "src/server.py"],
+      "env": {
+        "PARLAYAPI_KEY": "${user_config.parlayapi_key}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "parlayapi_signup", "description": "Create a free-tier ParlayAPI account and get a working API key (keyless)" },
+    { "name": "parlayapi_checkout_link", "description": "Generate a Stripe Checkout URL to upgrade a tier (keyless)" },
+    { "name": "parlayapi_magic_link", "description": "Email a passwordless login link for an existing account (keyless)" },
+    { "name": "parlayapi_get_pricing", "description": "Current public pricing and credit tiers (keyless)" },
+    { "name": "parlayapi_live_sports", "description": "Active live sports with event and book counts (keyless)" },
+    { "name": "parlayapi_live_search", "description": "Search live teams, players, and sport keys (keyless)" },
+    { "name": "parlayapi_live_command_center", "description": "Public best-line command center preview (keyless)" },
+    { "name": "parlayapi_source_quality", "description": "Public per-source freshness and quality metadata (keyless)" },
+    { "name": "parlayapi_book_coverage", "description": "Public per-book coverage gates (keyless)" },
+    { "name": "parlayapi_list_sports", "description": "List available sport keys (needs key)" },
+    { "name": "parlayapi_get_odds", "description": "Game-level odds (h2h, spreads, totals) for a sport (needs key)" },
+    { "name": "parlayapi_get_props", "description": "Player prop odds for a sport (needs key)" },
+    { "name": "parlayapi_best_line", "description": "Best price per outcome across bookmakers (needs key)" },
+    { "name": "parlayapi_verdict", "description": "One-call BET or PASS verdict for a specific bet (needs key)" },
+    { "name": "parlayapi_set_bettable_books", "description": "Remember which books the user can bet at so verdicts scope to them" },
+    { "name": "parlayapi_parlay_verdict", "description": "Grade a multi-leg parlay: fair price, best book, EV, weakest leg (needs key)" },
+    { "name": "parlayapi_best_bets", "description": "Ranked +EV plays for a sport, scoped to your books (needs key)" },
+    { "name": "parlayapi_account_info", "description": "Tier, credits remaining, and billing period for the key in use (needs key)" },
+    { "name": "parlayapi_find_arbitrage", "description": "Guaranteed-profit arbitrage opportunities across bookmakers (needs key)" },
+    { "name": "parlayapi_find_ev", "description": "Positive-EV bets vs a sharp book's no-vig fair line (needs key)" },
+    { "name": "parlayapi_consensus", "description": "Consensus (average) odds across bookmakers per market (needs key)" },
+    { "name": "parlayapi_find_middles", "description": "Cross-book middle opportunities (needs key)" }
+  ],
+  "user_config": {
+    "parlayapi_key": {
+      "type": "string",
+      "title": "ParlayAPI Key",
+      "description": "Optional. Leave blank to start keyless: signup, pricing, live previews, source quality, and coverage tools work with no key, and the signup tool can create one for you. Odds and analytics tools need a key. Free tier: 1,000 credits per month, no card, at https://parlay-api.com.",
+      "sensitive": true,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "keywords": ["sports", "odds", "betting", "arbitrage", "ev", "parlay", "sportsbook", "api"],
+  "license": "MIT"
+}
