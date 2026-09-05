@@ -35,7 +35,11 @@ def normalize_optional_fields(value):
     return value
 
 
-def check(check_published=False):
+def check(check_published=False, allow_unpublished_package=False):
+    if allow_unpublished_package and (
+        os.environ.get("GITHUB_EVENT_NAME") != "pull_request" or check_published
+    ):
+        raise ValueError("Unpublished packages are allowed only during pull-request preflight")
     manifest = json.loads((ROOT / "server.official.json").read_text())
     schema = get_json(SCHEMA)
     Draft202012Validator.check_schema(schema)
@@ -50,10 +54,19 @@ def check(check_published=False):
     assert manifest["remotes"][0]["type"] == "streamable-http"
     package = manifest["packages"][0]
     assert (package["registryType"], package["identifier"], package["version"]) == ("pypi", "parlayapi-mcp", version)
-    published = get_json(f"https://pypi.org/pypi/parlayapi-mcp/{version}/json")
-    assert published["info"]["version"] == version
-    assert f"mcp-name: {NAME}" in published["info"]["description"], "PyPI ownership marker missing"
-    assert published["urls"] and all(not file["yanked"] for file in published["urls"])
+    ownership_marker = f"mcp-name: {NAME}"
+    assert ownership_marker in (ROOT / "README.md").read_text(), "README ownership marker missing"
+    package_unpublished = False
+    try:
+        published = get_json(f"https://pypi.org/pypi/parlayapi-mcp/{version}/json")
+    except HTTPError as error:
+        if error.code != 404 or not allow_unpublished_package:
+            raise
+        package_unpublished = True
+    else:
+        assert published["info"]["version"] == version
+        assert ownership_marker in published["info"]["description"], "PyPI ownership marker missing"
+        assert published["urls"] and all(not file["yanked"] for file in published["urls"])
     tag = os.environ.get("GITHUB_REF", "")
     if tag.startswith("refs/tags/"):
         assert tag == f"refs/tags/v{version}", "Release tag and package version differ"
@@ -73,11 +86,20 @@ def check(check_published=False):
     if output:
         with open(output, "a") as handle:
             handle.write(f"needs_publish={str(needs_publish).lower()}\n")
-    print(f"Validated {NAME}@{version}: schema, manifest parity, PyPI ownership, remote transport.")
+    print(f"Validated {NAME}@{version}: schema, manifest parity, README ownership, remote transport.")
+    if package_unpublished:
+        print("PyPI version is unpublished; allowed for pull-request preflight only.")
+    else:
+        print("Published PyPI package and ownership verified.")
     print("Registry publication needed." if needs_publish else "Exact metadata already published.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--published", action="store_true")
-    check(parser.parse_args().published)
+    parser.add_argument(
+        "--allow-unpublished-package", action="store_true",
+        help="Allow a PyPI 404 during pull-request preflight only",
+    )
+    args = parser.parse_args()
+    check(args.published, args.allow_unpublished_package)

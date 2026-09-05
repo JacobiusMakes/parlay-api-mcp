@@ -6,6 +6,7 @@ on:
       - 'server*.json'
       - 'registry/**'
       - 'pyproject.toml'
+      - 'README.md'
       - 'scripts/*registry*.py'
       - '.github/workflows/mcp-registry.yml'
   release:
@@ -29,7 +30,11 @@ jobs:
         run: python3 -m pip install 'jsonschema==4.26.0'
       - name: Check registry serialization handling
         run: python3 -m unittest discover -s scripts -p 'test_registry.py'
+      - name: Validate registry metadata for a pull request
+        if: github.event_name == 'pull_request'
+        run: python3 scripts/check_registry.py --allow-unpublished-package
       - name: Validate registry metadata and published package
+        if: github.event_name != 'pull_request'
         run: python3 scripts/check_registry.py
 
   publish:
