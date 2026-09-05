@@ -1,0 +1,107 @@
+name: Docker catalog checks
+
+# Review and merge this workflow before explicitly running the hosted checks.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-catalog-check
+  cancel-in-progress: false
+
+jobs:
+  catalog:
+    if: github.repository == 'JacobiusMakes/parlay-api-mcp' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ""
+      GH_TOKEN: ""
+      PARLAYAPI_KEY: ""
+      PARLAY_API_KEY: ""
+    steps:
+      - name: Check out the exact Docker catalog submission
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: JacobiusMakes/mcp-registry
+          ref: 2e41c8a4d57555963741d3e981712f714ea40060
+          path: registry
+          persist-credentials: false
+
+      - name: Set up Go required by the pinned registry
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: registry/go.mod
+          cache: false
+
+      - name: Set up Node for upstream Prettier validation
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+
+      - name: Check immutable input and metadata-only build path
+        working-directory: registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 2e41c8a4d57555963741d3e981712f714ea40060
+          test -f servers/parlayapi/tools.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          tools = json.loads(Path('servers/parlayapi/tools.json').read_text())
+          assert len(tools) == 22 and len({tool['name'] for tool in tools}) == 22
+          assert 'commit: 5ce675a48baaedef286db1c21bc3de44f3e07a42' in Path('servers/parlayapi/server.yaml').read_text()
+          print('Pinned catalog and source commit verified; tools.json supplies metadata without tool calls.')
+          PY
+          docker version
+          docker buildx version
+          npm install --no-save --package-lock=false --ignore-scripts prettier@3.9.6
+          mkdir -p "$RUNNER_TEMP/docker-catalog-evidence"
+
+      - name: Run official registry validation
+        working-directory: registry
+        shell: bash
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+          go run ./cmd/validate --name parlayapi 2>&1 | tee "$RUNNER_TEMP/docker-catalog-evidence/validate.log"
+
+      - name: Run official image build with metadata discovery
+        working-directory: registry
+        shell: bash
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          # The pinned upstream command detects tools.json and reads metadata
+          # from it. It does not start the server or call any account/API tool.
+          go run ./cmd/build --tools parlayapi 2>&1 | tee "$RUNNER_TEMP/docker-catalog-evidence/build.log"
+          docker image inspect mcp/parlayapi --format '{{json .Config.Labels}}' > "$RUNNER_TEMP/docker-catalog-evidence/image-labels.json"
+          test "$(docker image inspect mcp/parlayapi --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = 5ce675a48baaedef286db1c21bc3de44f3e07a42
+
+      - name: Run official catalog generation
+        working-directory: registry
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          go run ./cmd/catalog parlayapi 2>&1 | tee "$RUNNER_TEMP/docker-catalog-evidence/catalog.log"
+          test -s catalogs/parlayapi/catalog.yaml
+          cp catalogs/parlayapi/catalog.yaml "$RUNNER_TEMP/docker-catalog-evidence/catalog.yaml"
+          git diff --exit-code
+
+      - name: Retain exact check evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: docker-catalog-parlayapi-2e41c8a
+          path: ${{ runner.temp }}/docker-catalog-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Remove this job's local build images
+        if: always()
+        shell: bash
+        run: docker image rm -f mcp/parlayapi check || true
