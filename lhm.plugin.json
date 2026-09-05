@@ -1,0 +1,790 @@
+{
+  "author": "Jacob",
+  "authorUrl": "https://github.com/JacobiusMakes",
+  "description": "Sports odds tools for personal and internal research. Public pricing, previews and coverage inspection work without a key; authenticated data uses your own ParlayAPI account. Includes account signup, login-email, checkout-link and saved-book-preference actions, to invoke only at the user's request.",
+  "homepage": "https://parlay-api.com",
+  "identifier": "jacobiusmakes-parlay-api-mcp",
+  "name": "ParlayAPI Sports Odds",
+  "prompts": [],
+  "resources": [
+    {
+      "name": "docs_quickstart",
+      "uri": "parlayapi://docs/quickstart",
+      "description": "Quickstart code samples for ParlayAPI in Python and JS.",
+      "mimeType": "text/plain"
+    }
+  ],
+  "tools": [
+    {
+      "name": "parlayapi_signup",
+      "description": "Create a free-tier ParlayAPI account and get a working API key (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "intended_use": {
+            "default": "",
+            "title": "Intended Use",
+            "type": "string"
+          },
+          "agent_id": {
+            "default": "mcp-client",
+            "title": "Agent Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "parlayapi_signupArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_signupDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_checkout_link",
+      "description": "Generate a Stripe Checkout URL to upgrade a tier (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "tier": {
+            "default": "pro",
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "parlayapi_checkout_linkArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_checkout_linkDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_magic_link",
+      "description": "Email a passwordless login link for an existing account (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "parlayapi_magic_linkArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_magic_linkDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_get_pricing",
+      "description": "Current public pricing and credit tiers (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "title": "parlayapi_get_pricingArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_get_pricingDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_live_sports",
+      "description": "Active live sports with event and book counts (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "title": "parlayapi_live_sportsArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Result",
+            "type": "array"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "parlayapi_live_sportsOutput"
+      }
+    },
+    {
+      "name": "parlayapi_live_search",
+      "description": "Search live teams, players, and sport keys (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "title": "Q",
+            "type": "string"
+          },
+          "limit": {
+            "default": 25,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "q"
+        ],
+        "title": "parlayapi_live_searchArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_live_searchDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_live_command_center",
+      "description": "Public best-line command center preview (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "default": "",
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "limit": {
+            "default": 12,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "parlayapi_live_command_centerArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_live_command_centerDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_source_quality",
+      "description": "Public per-source freshness and quality metadata (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "default": 10,
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 40,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "parlayapi_source_qualityArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_source_qualityDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_book_coverage",
+      "description": "Public per-book coverage gates (keyless)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "window_minutes": {
+            "default": 15,
+            "title": "Window Minutes",
+            "type": "integer"
+          },
+          "include_warn": {
+            "default": true,
+            "title": "Include Warn",
+            "type": "boolean"
+          }
+        },
+        "title": "parlayapi_book_coverageArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_book_coverageDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_list_sports",
+      "description": "List available sport keys (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "active_only": {
+            "default": true,
+            "title": "Active Only",
+            "type": "boolean"
+          }
+        },
+        "title": "parlayapi_list_sportsArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Result",
+            "type": "array"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "parlayapi_list_sportsOutput"
+      }
+    },
+    {
+      "name": "parlayapi_get_odds",
+      "description": "Game-level odds (h2h, spreads, totals) for a sport (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "markets": {
+            "default": "h2h",
+            "title": "Markets",
+            "type": "string"
+          },
+          "regions": {
+            "default": "us",
+            "title": "Regions",
+            "type": "string"
+          },
+          "bookmakers": {
+            "default": "",
+            "title": "Bookmakers",
+            "type": "string"
+          },
+          "odds_format": {
+            "default": "decimal",
+            "title": "Odds Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_get_oddsArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_get_oddsDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_get_props",
+      "description": "Player prop odds for a sport (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "markets": {
+            "default": "",
+            "title": "Markets",
+            "type": "string"
+          },
+          "bookmakers": {
+            "default": "",
+            "title": "Bookmakers",
+            "type": "string"
+          },
+          "player": {
+            "default": "",
+            "title": "Player",
+            "type": "string"
+          },
+          "include_futures": {
+            "default": false,
+            "title": "Include Futures",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_get_propsArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_get_propsDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_best_line",
+      "description": "Best price per outcome across bookmakers (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "market": {
+            "default": "h2h",
+            "title": "Market",
+            "type": "string"
+          },
+          "bookmakers": {
+            "default": "",
+            "title": "Bookmakers",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_best_lineArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_best_lineDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_verdict",
+      "description": "One-call BET or PASS verdict for a specific bet (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport": {
+            "title": "Sport",
+            "type": "string"
+          },
+          "side": {
+            "title": "Side",
+            "type": "string"
+          },
+          "market": {
+            "default": "h2h",
+            "title": "Market",
+            "type": "string"
+          },
+          "home": {
+            "default": "",
+            "title": "Home",
+            "type": "string"
+          },
+          "away": {
+            "default": "",
+            "title": "Away",
+            "type": "string"
+          },
+          "team": {
+            "default": "",
+            "title": "Team",
+            "type": "string"
+          },
+          "player": {
+            "default": "",
+            "title": "Player",
+            "type": "string"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Line"
+          },
+          "book": {
+            "default": "",
+            "title": "Book",
+            "type": "string"
+          },
+          "price": {
+            "default": "",
+            "title": "Price",
+            "type": "string"
+          },
+          "region": {
+            "default": "",
+            "title": "Region",
+            "type": "string"
+          },
+          "books": {
+            "default": "",
+            "title": "Books",
+            "type": "string"
+          },
+          "bankroll": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Bankroll"
+          },
+          "kelly": {
+            "default": 0.5,
+            "title": "Kelly",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sport",
+          "side"
+        ],
+        "title": "parlayapi_verdictArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_verdictDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_set_bettable_books",
+      "description": "Remember which books the user can bet at so verdicts scope to them",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "default": "",
+            "title": "Region",
+            "type": "string"
+          },
+          "books": {
+            "default": "",
+            "title": "Books",
+            "type": "string"
+          }
+        },
+        "title": "parlayapi_set_bettable_booksArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_set_bettable_booksDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_parlay_verdict",
+      "description": "Grade a multi-leg parlay: fair price, best book, EV, weakest leg (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "legs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Legs",
+            "type": "array"
+          },
+          "region": {
+            "default": "",
+            "title": "Region",
+            "type": "string"
+          },
+          "books": {
+            "default": "",
+            "title": "Books",
+            "type": "string"
+          },
+          "stake": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Stake"
+          },
+          "book": {
+            "default": "",
+            "title": "Book",
+            "type": "string"
+          },
+          "bankroll": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Bankroll"
+          },
+          "kelly": {
+            "default": 0.5,
+            "title": "Kelly",
+            "type": "number"
+          }
+        },
+        "required": [
+          "legs"
+        ],
+        "title": "parlayapi_parlay_verdictArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_parlay_verdictDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_best_bets",
+      "description": "Ranked +EV plays for a sport, scoped to your books (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "region": {
+            "default": "",
+            "title": "Region",
+            "type": "string"
+          },
+          "books": {
+            "default": "",
+            "title": "Books",
+            "type": "string"
+          },
+          "limit": {
+            "default": 20,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "min_edge": {
+            "default": 2,
+            "title": "Min Edge",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_best_betsArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_best_betsDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_account_info",
+      "description": "Tier, credits remaining, and billing period for the key in use (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "title": "parlayapi_account_infoArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_account_infoDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_find_arbitrage",
+      "description": "Cross-book arbitrage candidates (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "min_profit": {
+            "default": 0,
+            "title": "Min Profit",
+            "type": "number"
+          },
+          "exclude_exchanges": {
+            "default": false,
+            "title": "Exclude Exchanges",
+            "type": "boolean"
+          },
+          "markets": {
+            "default": "",
+            "title": "Markets",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_find_arbitrageArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_find_arbitrageDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_find_ev",
+      "description": "Positive-EV bets vs a sharp book's no-vig fair line (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "sharp_book": {
+            "default": "pinnacle",
+            "title": "Sharp Book",
+            "type": "string"
+          },
+          "min_edge": {
+            "default": 2,
+            "title": "Min Edge",
+            "type": "number"
+          },
+          "markets": {
+            "default": "",
+            "title": "Markets",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_find_evArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_find_evDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_consensus",
+      "description": "Consensus (average) odds across bookmakers per market (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "markets": {
+            "default": "",
+            "title": "Markets",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_consensusArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_consensusDictOutput"
+      }
+    },
+    {
+      "name": "parlayapi_find_middles",
+      "description": "Cross-book middle opportunities (needs key)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sport_key": {
+            "title": "Sport Key",
+            "type": "string"
+          },
+          "min_gap": {
+            "default": 1,
+            "title": "Min Gap",
+            "type": "number"
+          },
+          "markets": {
+            "default": "",
+            "title": "Markets",
+            "type": "string"
+          },
+          "include_props": {
+            "default": true,
+            "title": "Include Props",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sport_key"
+        ],
+        "title": "parlayapi_find_middlesArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "parlayapi_find_middlesDictOutput"
+      }
+    }
+  ],
+  "version": "0.3.5",
+  "category": "tools",
+  "icon": "https://raw.githubusercontent.com/JacobiusMakes/parlay-api-mcp/main/mcpb/icon.png",
+  "tags": [
+    "sports",
+    "odds",
+    "research",
+    "python",
+    "mcp"
+  ]
+}
