@@ -26,7 +26,7 @@ directly.
 ## Install in Claude Desktop (one click)
 
 Download
-[parlayapi-mcp-0.3.5.mcpb](https://github.com/JacobiusMakes/parlay-api-mcp/releases/download/v0.3.5/parlayapi-mcp-0.3.5.mcpb)
+[parlayapi-mcp-0.3.5-directory.mcpb](https://github.com/JacobiusMakes/parlay-api-mcp/releases/download/v0.3.5/parlayapi-mcp-0.3.5-directory.mcpb)
 and open it (double-click, or drag it onto Claude Desktop). Claude
 Desktop unpacks the bundle and runs the server with its managed uv
 runtime, so no terminal or Python setup is needed.
@@ -188,6 +188,10 @@ PARLAYAPI_BASE_URL=http://127.0.0.1:8080 \
 PARLAYAPI_KEY=your_local_test_key \
 parlayapi-mcp
 ```
+
+## Privacy Policy
+
+This extension connects to ParlayAPI. See the [ParlayAPI Privacy Policy](https://parlay-api.com/privacy).
 
 ## License
 
