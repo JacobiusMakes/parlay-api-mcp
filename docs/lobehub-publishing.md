@@ -20,7 +20,7 @@ Copyable keyless local-client configuration:
   "mcpServers": {
     "parlayapi": {
       "command": "uvx",
-      "args": ["parlayapi-mcp==0.3.5"]
+      "args": ["--from", "parlayapi-mcp==0.3.5", "parlayapi-mcp"]
     }
   }
 }
