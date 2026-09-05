@@ -43,8 +43,8 @@ The bundle source lives in [`mcpb/`](mcpb/). Rebuild it with
 ## Install (manual, any MCP client)
 
 ```bash
-# Quickest path, no venv:
-uvx parlayapi-mcp --help
+# Start the stdio server (normally launched by your MCP client):
+uvx parlayapi-mcp
 
 # Or install globally with pip:
 pip install parlayapi-mcp
@@ -110,6 +110,41 @@ After the user signs up, add the API key for paid data tools:
 openclaw mcp set parlayapi '{"command":"uvx","args":["parlayapi-mcp"],"env":{"PARLAYAPI_KEY":"your_key_here"}}'
 ```
 
+## Run locally with Docker
+
+Build the stdio container from this repository:
+
+```bash
+docker build -t parlayapi-mcp:local .
+docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges parlayapi-mcp:local
+```
+
+The process waits for MCP messages on stdin. It does not open a web server or
+make an API call just by starting. Connect it through an MCP client; do not use
+`-t`, which would allocate a terminal instead of the MCP stdio transport.
+
+For account tools, configure your own `PARLAYAPI_KEY` in your MCP client's
+secret configuration and pass that environment variable into the container:
+
+```bash
+docker run --rm -i --read-only --cap-drop=ALL --security-opt=no-new-privileges -e PARLAYAPI_KEY parlayapi-mcp:local
+```
+
+No key is baked into the image. Each user should configure their own key and
+keep account responses within their own client. This container is not a shared
+community feed. The MIT software license grants no data distribution rights;
+[applicable Terms](https://parlay-api.com/terms) and any written agreement govern
+API data use. These container defaults do not amend existing agreements.
+
+Public discovery tools need no key. Account tools use your allowance; check
+[current plans and limits](https://parlay-api.com/pricing). The existing tool set
+also includes account creation, checkout-link creation, login-link email and
+saved-book preferences. Approve those actions explicitly in your MCP client.
+Listing tools itself creates no account, sends no email and starts no checkout.
+
+For private security reports, email support@parlay-api.com. Do not put API keys
+or account responses in public issues.
+
 ## Tools exposed
 
 | Tool | Auth | Purpose |
@@ -132,7 +167,7 @@ openclaw mcp set parlayapi '{"command":"uvx","args":["parlayapi-mcp"],"env":{"PA
 | `parlayapi_parlay_verdict` | key | Grade a multi-leg parlay: combined fair price, best book to place it, EV, weakest leg, correlation warnings, payout |
 | `parlayapi_best_bets` | key | Ranked +EV plays for a sport, scoped to books you can bet at, plus edge alerts |
 | `parlayapi_account_info` | key | Tier, credits remaining, billing period |
-| `parlayapi_find_arbitrage` | key | Guaranteed-profit arbitrage across books, 3-way (home/draw/away) markets included |
+| `parlayapi_find_arbitrage` | key | Cross-book arbitrage candidates, 3-way (home/draw/away) markets included |
 | `parlayapi_find_ev` | key | Positive-EV bets vs a sharp book's no-vig fair line |
 | `parlayapi_consensus` | key | Consensus (average) odds across all bookmakers per market |
 | `parlayapi_find_middles` | key | Cross-book middle opportunities |
