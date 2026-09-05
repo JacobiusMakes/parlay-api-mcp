@@ -132,6 +132,10 @@ openclaw mcp set parlayapi '{"command":"uvx","args":["parlayapi-mcp"],"env":{"PA
 | `parlayapi_parlay_verdict` | key | Grade a multi-leg parlay: combined fair price, best book to place it, EV, weakest leg, correlation warnings, payout |
 | `parlayapi_best_bets` | key | Ranked +EV plays for a sport, scoped to books you can bet at, plus edge alerts |
 | `parlayapi_account_info` | key | Tier, credits remaining, billing period |
+| `parlayapi_find_arbitrage` | key | Guaranteed-profit arbitrage across books, 3-way (home/draw/away) markets included |
+| `parlayapi_find_ev` | key | Positive-EV bets vs a sharp book's no-vig fair line |
+| `parlayapi_consensus` | key | Consensus (average) odds across all bookmakers per market |
+| `parlayapi_find_middles` | key | Cross-book middle opportunities |
 
 ## Resources
 
@@ -140,8 +144,8 @@ openclaw mcp set parlayapi '{"command":"uvx","args":["parlayapi-mcp"],"env":{"PA
 ## Local development
 
 ```bash
-git clone https://github.com/JacobiusMakes/ParlayAPI
-cd ParlayAPI/mcp-server
+git clone https://github.com/JacobiusMakes/parlay-api-mcp
+cd parlay-api-mcp
 pip install -e .
 
 # Run against the local API instead of production:
