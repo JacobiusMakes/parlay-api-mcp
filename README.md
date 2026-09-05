@@ -80,6 +80,8 @@ clients that use the underscore style.
 
 ### Cursor
 
+For the packaged integration, see [Cursor plugin setup](docs/cursor-publishing.md).
+
 Add to `.cursor/mcp.json`:
 
 ```json
