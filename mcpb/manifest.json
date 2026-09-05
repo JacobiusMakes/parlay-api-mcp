@@ -3,8 +3,8 @@
   "name": "parlayapi-mcp",
   "display_name": "ParlayAPI Sports Odds",
   "version": "0.3.5",
-  "description": "Real-time sports odds from 30+ sportsbooks: best lines, one-call bet verdicts, arbitrage, +EV, and keyless live previews.",
-  "long_description": "MCP server for [ParlayAPI](https://parlay-api.com), a real-time sports odds API.\n\nWorks out of the box with no API key: signup, pricing, live previews, source-quality proof, and per-book coverage tools are keyless. Odds and analytics tools (odds, props, best line, verdicts, arbitrage, +EV, middles) need a key. The free tier is 1,000 credits per month with no card required; the `parlayapi_signup` tool can create an account and return a working key without leaving the chat. Pricing for paid tiers lives at https://parlay-api.com/pricing.\n\nHistorical coverage runs from 2005 for game lines, with 30M+ prop closing lines since 2022.",
+  "description": "Sports odds tools for personal and internal research, with keyless public previews and account-based odds and analytics.",
+  "long_description": "MCP server for [ParlayAPI](https://parlay-api.com), with sports odds and analytics tools for personal and internal research. Coverage and availability vary; use the source-quality and book-coverage tools to inspect the current service.\n\nPublic discovery, pricing, preview and coverage tools work without an API key. Authenticated odds and analytics tools use your own ParlayAPI account. Current plans are at https://parlay-api.com/pricing.\n\nThe server also exposes tools to create an account, send a login email, generate a checkout link and save book preferences. Invoke these account or preference actions only when requested by the user.",
   "author": {
     "name": "Jacob",
     "email": "jacob@parlay-api.com",
@@ -16,6 +16,7 @@
   },
   "homepage": "https://parlay-api.com",
   "documentation": "https://parlay-api.com/docs",
+  "privacy_policies": ["https://parlay-api.com/privacy"],
   "support": "https://github.com/JacobiusMakes/parlay-api-mcp/issues",
   "icon": "icon.png",
   "server": {
@@ -48,7 +49,7 @@
     { "name": "parlayapi_parlay_verdict", "description": "Grade a multi-leg parlay: fair price, best book, EV, weakest leg (needs key)" },
     { "name": "parlayapi_best_bets", "description": "Ranked +EV plays for a sport, scoped to your books (needs key)" },
     { "name": "parlayapi_account_info", "description": "Tier, credits remaining, and billing period for the key in use (needs key)" },
-    { "name": "parlayapi_find_arbitrage", "description": "Guaranteed-profit arbitrage opportunities across bookmakers (needs key)" },
+    { "name": "parlayapi_find_arbitrage", "description": "Cross-book arbitrage candidates (needs key)" },
     { "name": "parlayapi_find_ev", "description": "Positive-EV bets vs a sharp book's no-vig fair line (needs key)" },
     { "name": "parlayapi_consensus", "description": "Consensus (average) odds across bookmakers per market (needs key)" },
     { "name": "parlayapi_find_middles", "description": "Cross-book middle opportunities (needs key)" }

@@ -189,6 +189,10 @@ PARLAYAPI_KEY=your_local_test_key \
 parlayapi-mcp
 ```
 
+## Privacy Policy
+
+This extension connects to ParlayAPI. See the [ParlayAPI Privacy Policy](https://parlay-api.com/privacy).
+
 ## License
 
 MIT
