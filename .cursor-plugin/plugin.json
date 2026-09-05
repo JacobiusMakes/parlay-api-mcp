@@ -1,0 +1,31 @@
+{
+  "name": "parlayapi",
+  "version": "0.3.5",
+  "description": "Sports odds, player props and source coverage for AI assistants. Public discovery is keyless; full data uses your own ParlayAPI account.",
+  "author": {
+    "name": "JacobiusMakes"
+  },
+  "homepage": "https://parlay-api.com/mcp",
+  "repository": "https://github.com/JacobiusMakes/parlay-api-mcp",
+  "license": "MIT",
+  "logo": "mcpb/icon.png",
+  "keywords": [
+    "mcp",
+    "sports-odds",
+    "player-props",
+    "sports-data"
+  ],
+  "mcpServers": "./cursor-mcp.json",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "PARLAYAPI_KEY": {
+        "type": "string",
+        "title": "ParlayAPI key",
+        "description": "Optional for public discovery. Set your own account key for full odds and account tools.",
+        "default": ""
+      }
+    },
+    "required": []
+  }
+}
