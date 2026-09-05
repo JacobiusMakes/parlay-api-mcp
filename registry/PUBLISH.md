@@ -1,66 +1,40 @@
-# Publishing ParlayAPI to the official MCP registry
+# Publish ParlayAPI to the official MCP Registry
 
-**Why this matters for organic growth:** the MCP registry
-(`registry.modelcontextprotocol.io`) is where AI-tool users and agents browse for
-capabilities. As of 2026-07-25 ParlayAPI is **not listed**, and searching the
-registry for "parlay" returns a *different* company (`run.parlay/parlay`, a
-prediction-market aggregator). We are invisible in the one directory built for
-agent discovery, while a similar name owns the search term.
+The published namespace is `io.github.JacobiusMakes/parlayapi`. Its source is
+this public repository, and its Python package is `parlayapi-mcp` on PyPI.
 
-Everything is prepared. What remains needs an operator credential.
+`server.official.json` is the canonical registry manifest. Keep
+`registry/server.json` identical for consumers that use that path. The root
+`server.json` is a separate, descriptive client manifest, not a registry schema.
 
-## What is ready
+## Release workflow
 
-- `mcp-server/registry/server.json` — the manifest in the registry's current
-  schema (`2025-12-11`), pointing at the already-published PyPI package
-  `parlayapi-mcp` 0.3.0. Validated JSON.
-- Signing key — an ed25519 keypair for the `com.parlay-api` namespace already
-  exists on the box at `/home/parlay/.mcp_registry_key` (chmod 600, private key
-  never printed or copied off the host).
-- Public key for DNS verification:
+1. Update the version in `pyproject.toml` and all three manifests. Keep the
+   `mcp-name: io.github.JacobiusMakes/parlayapi` marker in the PyPI README.
+2. Publish the Python package to PyPI using the normal package release process.
+3. Publish the matching GitHub release, named `v<version>`, from a commit on main.
+   The **MCP Registry** workflow validates the package and publishes the manifest.
+4. To recover a missed registry publication, run **MCP Registry** from the Actions
+   tab on `main`. An identical existing entry is a successful no-op. A conflicting
+   entry fails instead of overwriting published metadata.
 
-      v=MCPv1; k=ed25519; p=go98ulKv4PEA00vt4vrR1IVX6oMqQ/iax4JH2/iQtKI=
+The workflow uses GitHub OIDC and a checksum-pinned official publisher binary.
+No personal token, DNS change or device-code login is required. Pull requests
+only validate; publishing runs on GitHub-hosted runners for main/release commits.
+Publishing the registry entry does not deploy the API or publish a new PyPI package.
 
-- CLI: `mcp-publisher` 1.8.0 (download from the
-  `modelcontextprotocol/registry` releases).
+## Verify
 
-## Path A: branded namespace `com.parlay-api/parlayapi` (recommended)
+```bash
+python3 -m pip install 'jsonschema==4.26.0'
+python3 scripts/check_registry.py --published
+```
 
-Reads as vendor-owned, which is worth something in a betting-data category.
-Blocked only because the `CLOUDFLARE_API_TOKEN` in `.env` is **expired**
-(verified against Cloudflare's token endpoint; nothing else in the codebase uses
-it, so its expiry is not breaking anything else).
+This checks the official schema, manifest parity, current PyPI package ownership,
+stdio installation, hosted transport and the exact published registry entry.
+It does not make account, billing or authenticated odds requests.
 
-1. Add a TXT record on `parlay-api.com` with exactly the value above. Either
-   paste it in the Cloudflare dashboard, or refresh the API token and re-run
-   `scratchpad/cf_txt.py` (that script only ever CREATEs, never edits or deletes
-   existing TXT records).
-2. Then, on the box:
+Official references:
 
-       mcp-publisher login dns --domain parlay-api.com \
-         --private-key "$(cat /home/parlay/.mcp_registry_key)"
-       cd mcp-server/registry && mcp-publisher publish
-
-## Path B: GitHub namespace `io.github.JacobiusMakes/parlayapi` (faster)
-
-No DNS needed; uses a GitHub device-code login (about 30 seconds, interactive).
-
-1. Change `name` in `server.json` to `io.github.JacobiusMakes/parlayapi`.
-2. `mcp-publisher login github` (visit the URL, enter the code).
-3. `cd mcp-server/registry && mcp-publisher publish`
-
-## Verify after publishing
-
-    curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=parlayapi" | head -c 400
-
-The entry should come back with our name, description and the PyPI package.
-
-## Still outstanding on the distribution surface
-
-- **npm SDK unpublished** — blocked on the npm account reset. `~/.npmrc` still
-  contains the literal `__PASTE_` placeholder.
-- **`/openapi.json` is 200 paths / 294 KB.** Far too large for an agent to
-  ingest; anything that tries burns enormous context or gives up. A curated
-  agent-facing subset (the ~15 endpoints that matter: odds, props, sports,
-  bookmakers, ev, arbitrage, consensus, middles, verdict, best-bets, historical)
-  is the obvious next build, linked from `llms.txt`.
+- [Publishing automation](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/github-actions.mdx)
+- [Registry authentication](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/authentication.mdx)

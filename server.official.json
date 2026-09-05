@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.JacobiusMakes/parlayapi",
-  "description": "Live odds & props from 30+ sportsbooks + Kalshi/Polymarket: arb, +EV, verdicts. Free agent signup.",
+  "description": "Sports odds, player props and source coverage for AI assistants. Connect with your own API key.",
   "title": "ParlayAPI",
   "repository": {
     "url": "https://github.com/JacobiusMakes/parlay-api-mcp",
@@ -19,9 +19,10 @@
       },
       "environmentVariables": [
         {
-          "description": "ParlayAPI key. Optional: the public preview and the signup tool work without one, so an agent can get started and provision its own key.",
+          "description": "Your ParlayAPI key. Optional for public discovery and pricing; required for account data and full odds access.",
           "isSecret": true,
-          "name": "PARLAYAPI_KEY"
+          "name": "PARLAYAPI_KEY",
+          "isRequired": false
         }
       ]
     }
@@ -33,7 +34,7 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "Bearer <api_key>. Optional: signup, pricing, and discovery tools work keyless; parlayapi_signup provisions a key.",
+          "description": "Bearer <your ParlayAPI key>. Optional for public discovery and pricing; use your own key for account data and full odds access.",
           "isRequired": false,
           "isSecret": true
         }
