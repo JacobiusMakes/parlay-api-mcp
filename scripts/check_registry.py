@@ -22,6 +22,19 @@ def get_json(url):
         return json.load(response)
 
 
+def normalize_optional_fields(value):
+    """The registry omits isRequired=false when serializing optional inputs."""
+    if isinstance(value, dict):
+        return {
+            key: normalize_optional_fields(item)
+            for key, item in value.items()
+            if not (key == "isRequired" and item is False)
+        }
+    if isinstance(value, list):
+        return [normalize_optional_fields(item) for item in value]
+    return value
+
+
 def check(check_published=False):
     manifest = json.loads((ROOT / "server.official.json").read_text())
     schema = get_json(SCHEMA)
@@ -52,7 +65,7 @@ def check(check_published=False):
         if error.code != 404:
             raise
     else:
-        assert existing == manifest, "This registry version already exists with different metadata; choose a new version"
+        assert normalize_optional_fields(existing) == normalize_optional_fields(manifest), "This registry version already exists with different metadata; choose a new version"
         needs_publish = False
     if check_published:
         assert not needs_publish, "Registry version is not published"

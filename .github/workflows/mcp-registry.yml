@@ -6,7 +6,7 @@ on:
       - 'server*.json'
       - 'registry/**'
       - 'pyproject.toml'
-      - 'scripts/check_registry.py'
+      - 'scripts/*registry*.py'
       - '.github/workflows/mcp-registry.yml'
   release:
     types: [published]
@@ -27,6 +27,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Install schema validator
         run: python3 -m pip install 'jsonschema==4.26.0'
+      - name: Check registry serialization handling
+        run: python3 -m unittest discover -s scripts -p 'test_registry.py'
       - name: Validate registry metadata and published package
         run: python3 scripts/check_registry.py
 
