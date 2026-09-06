@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: JacobiusMakes/mcp-registry
-          ref: 2e41c8a4d57555963741d3e981712f714ea40060
+          ref: 7343e28955f091b5ecfcd32ce5eb3cf17c1f0e9f
           path: registry
           persist-credentials: false
 
@@ -46,14 +46,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = 2e41c8a4d57555963741d3e981712f714ea40060
+          test "$(git rev-parse HEAD)" = 7343e28955f091b5ecfcd32ce5eb3cf17c1f0e9f
           test -f servers/parlayapi/tools.json
           python3 - <<'PY'
           import json
           from pathlib import Path
           tools = json.loads(Path('servers/parlayapi/tools.json').read_text())
           assert len(tools) == 22 and len({tool['name'] for tool in tools}) == 22
-          assert 'commit: 5ce675a48baaedef286db1c21bc3de44f3e07a42' in Path('servers/parlayapi/server.yaml').read_text()
+          assert 'commit: 29083331240dedf5c434f41bb634680fc9d03b6a' in Path('servers/parlayapi/server.yaml').read_text()
           print('Pinned catalog and source commit verified; tools.json supplies metadata without tool calls.')
           PY
           docker version
@@ -79,7 +79,7 @@ jobs:
           # from it. It does not start the server or call any account/API tool.
           go run ./cmd/build --tools parlayapi 2>&1 | tee "$RUNNER_TEMP/docker-catalog-evidence/build.log"
           docker image inspect mcp/parlayapi --format '{{json .Config.Labels}}' > "$RUNNER_TEMP/docker-catalog-evidence/image-labels.json"
-          test "$(docker image inspect mcp/parlayapi --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = 5ce675a48baaedef286db1c21bc3de44f3e07a42
+          test "$(docker image inspect mcp/parlayapi --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = 29083331240dedf5c434f41bb634680fc9d03b6a
 
       - name: Run official catalog generation
         working-directory: registry
@@ -96,7 +96,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: docker-catalog-parlayapi-2e41c8a
+          name: docker-catalog-parlayapi-7343e289
           path: ${{ runner.temp }}/docker-catalog-evidence/
           if-no-files-found: warn
           retention-days: 14
