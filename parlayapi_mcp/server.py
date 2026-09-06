@@ -150,8 +150,7 @@ def parlayapi_signup(
 def parlayapi_checkout_link(email: str, tier: str = "pro") -> dict[str, Any]:
     """Generate a Stripe Checkout URL the user can click to upgrade.
 
-    Tiers: starter ($5), pro ($20), business ($40), enterprise ($100),
-    scale ($200). All are monthly subscriptions.
+    Use parlayapi_get_pricing for current tiers and prices.
     """
     with _client(needs_key=False) as c:
         r = c.post("/v1/agent/checkout-link", json={"email": email, "tier": tier})
@@ -612,12 +611,11 @@ def parlayapi_find_arbitrage(
     exclude_exchanges: bool = False,
     markets: str = "",
 ) -> dict[str, Any]:
-    """Find guaranteed-profit arbitrage opportunities across bookmakers.
+    """Request calculated cross-book price combinations.
 
-    Scans every event and returns bets where the combined implied
-    probability across the books is under 100%, so betting each side locks
-    in profit regardless of outcome. Soccer and other 3-way (home/draw/away)
-    markets are fully supported, including arbs anchored on the draw.
+    Calculations depend on the returned source quotes and requested filters.
+    Quotes, liquidity and execution can change; profit is not guaranteed.
+    Availability depends on the requested sport, event, market and source.
 
     Args:
         sport_key: e.g. "baseball_mlb", "soccer_epl".
