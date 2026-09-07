@@ -7,13 +7,13 @@
     "url": "https://github.com/JacobiusMakes/parlay-api-mcp",
     "source": "github"
   },
-  "version": "0.3.6",
+  "version": "0.3.7",
   "websiteUrl": "https://parlay-api.com/mcp",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "parlayapi-mcp",
-      "version": "0.3.6",
+      "version": "0.3.7",
       "transport": {
         "type": "stdio"
       },

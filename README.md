@@ -23,13 +23,18 @@ URL for the dashboard, and a Stripe upgrade URL the user can click.
 Then it calls `parlayapi_get_odds()`, `parlayapi_get_props()`, etc.
 directly.
 
-## Install in Claude Desktop (one click)
+## Install in Claude Desktop
 
-Download
-[parlayapi-mcp-0.3.6-directory.mcpb](https://github.com/JacobiusMakes/parlay-api-mcp/releases/download/v0.3.6/parlayapi-mcp-0.3.6-directory.mcpb)
-and open it (double-click, or drag it onto Claude Desktop). Claude
+Open the [latest desktop release](https://github.com/JacobiusMakes/parlay-api-mcp/releases/latest)
+and download its asset ending in `-directory.mcpb`. The release notes identify
+the bundle version and validation performed. Open the downloaded file
+(double-click, or drag it onto Claude Desktop). Claude
 Desktop unpacks the bundle and runs the server with its managed uv
 runtime, so no terminal or Python setup is needed.
+
+Python package 0.3.7 is a documentation update. The separately released
+0.3.6 desktop bundle has the same server implementation and corrected tool
+descriptions. Check the release page above for newer desktop bundles.
 
 The API key field in the install dialog is optional. Leave it blank to
 start keyless: signup, pricing, live previews, source quality, and
@@ -44,10 +49,10 @@ The bundle source lives in [`mcpb/`](mcpb/). Rebuild it with
 
 ```bash
 # Start the stdio server (normally launched by your MCP client):
-uvx --from parlayapi-mcp==0.3.6 parlayapi-mcp
+uvx --from parlayapi-mcp==0.3.7 parlayapi-mcp
 
 # Or install globally with pip:
-pip install parlayapi-mcp==0.3.6
+pip install parlayapi-mcp==0.3.7
 ```
 
 ## Configure your MCP client

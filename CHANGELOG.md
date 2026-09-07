@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.7
+
+- Point the packaged README to the latest desktop release and its `-directory.mcpb` asset, so later desktop releases do not leave PyPI readers on a fixed older download.
+- Remove the outdated bundle-pending notice from the published package description by including the current README.
+- Update Python package and required registry metadata to 0.3.7. Server implementation and dependencies are unchanged from 0.3.6.
+
+The desktop bundle is released separately. The available 0.3.6 directory bundle contains the same server implementation and corrected tool descriptions. This Python documentation release does not rebuild it or change existing client/catalog pins.
+
 ## 0.3.6
 
 - Ship the existing checkout-tool description fix: look up current plans with `parlayapi_get_pricing` instead of quoting fixed prices.
