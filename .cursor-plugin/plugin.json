@@ -1,6 +1,6 @@
 {
   "name": "parlayapi",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Sports odds, player props and source coverage for AI assistants. Public discovery is keyless; full data uses your own ParlayAPI account.",
   "author": {
     "name": "JacobiusMakes"

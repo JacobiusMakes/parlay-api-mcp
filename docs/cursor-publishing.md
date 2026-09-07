@@ -1,7 +1,7 @@
 # ParlayAPI for Cursor
 
 This repository includes a Cursor plugin manifest in `.cursor-plugin/plugin.json`.
-It loads `cursor-mcp.json` and the published `parlayapi-mcp` 0.3.5 package.
+It loads `cursor-mcp.json` and the `parlayapi-mcp` 0.3.6 package.
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) on the machine
 that runs the MCP server. The existing `.plugin/` metadata serves a separate
 community format; use this repository's Cursor manifest for the official portal.
