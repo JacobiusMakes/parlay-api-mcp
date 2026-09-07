@@ -26,7 +26,7 @@ directly.
 ## Install in Claude Desktop (one click)
 
 Download
-[parlayapi-mcp-0.3.5-directory.mcpb](https://github.com/JacobiusMakes/parlay-api-mcp/releases/download/v0.3.5/parlayapi-mcp-0.3.5-directory.mcpb)
+[parlayapi-mcp-0.3.6-directory.mcpb](https://github.com/JacobiusMakes/parlay-api-mcp/releases/download/v0.3.6/parlayapi-mcp-0.3.6-directory.mcpb)
 and open it (double-click, or drag it onto Claude Desktop). Claude
 Desktop unpacks the bundle and runs the server with its managed uv
 runtime, so no terminal or Python setup is needed.
@@ -39,9 +39,6 @@ Add the key later any time under Settings, Extensions, ParlayAPI.
 
 The bundle source lives in [`mcpb/`](mcpb/). Rebuild it with
 `npx @anthropic-ai/mcpb pack mcpb/`.
-
-The linked bundle remains pinned to 0.3.5. For the corrected 0.3.6 tool
-descriptions, use the manual setup below until a refreshed bundle is published.
 
 ## Install (manual, any MCP client)
 

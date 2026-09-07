@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "parlayapi-mcp",
   "display_name": "ParlayAPI Sports Odds",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Sports odds tools for personal and internal research, with keyless public previews and account-based odds and analytics.",
   "long_description": "MCP server for [ParlayAPI](https://parlay-api.com), with sports odds and analytics tools for personal and internal research. Coverage and availability vary; use the source-quality and book-coverage tools to inspect the current service.\n\nPublic discovery, pricing, preview and coverage tools work without an API key. Authenticated odds and analytics tools use your own ParlayAPI account. Current plans are at https://parlay-api.com/pricing.\n\nThe server also exposes tools to create an account, send a login email, generate a checkout link and save book preferences. Invoke these account or preference actions only when requested by the user.",
   "author": {
