@@ -1,7 +1,7 @@
 {
   "name": "parlayapi-mcp",
   "display_name": "ParlayAPI",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Sports odds, player props, source coverage and analysis tools for AI assistants. Public discovery works without a key; full data uses your own ParlayAPI account.",
   "homepage": "https://parlay-api.com/mcp",
   "documentation": "https://parlay-api.com/docs",
