@@ -40,14 +40,17 @@ Add the key later any time under Settings, Extensions, ParlayAPI.
 The bundle source lives in [`mcpb/`](mcpb/). Rebuild it with
 `npx @anthropic-ai/mcpb pack mcpb/`.
 
+The linked bundle remains pinned to 0.3.5. For the corrected 0.3.6 tool
+descriptions, use the manual setup below until a refreshed bundle is published.
+
 ## Install (manual, any MCP client)
 
 ```bash
 # Start the stdio server (normally launched by your MCP client):
-uvx parlayapi-mcp
+uvx --from parlayapi-mcp==0.3.6 parlayapi-mcp
 
 # Or install globally with pip:
-pip install parlayapi-mcp
+pip install parlayapi-mcp==0.3.6
 ```
 
 ## Configure your MCP client

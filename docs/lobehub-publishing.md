@@ -6,8 +6,8 @@ This repository contains a prepared owner declaration for LobeHub, `lhm.plugin.j
 
 - Repository: https://github.com/JacobiusMakes/parlay-api-mcp
 - Proposed stable identifier: `jacobiusmakes-parlay-api-mcp`. Confirm any existing listing before publishing; do not create another identifier to work around a conflict.
-- Display name: ParlayAPI Sports Odds. Server/package version: `0.3.5`.
-- Local stdio package: `parlayapi-mcp==0.3.5`, launched with `uvx`.
+- Display name: ParlayAPI Sports Odds. Server/package version: `0.3.6`.
+- Local stdio package: `parlayapi-mcp==0.3.6`, launched with `uvx`.
 - No key is needed to start the server or inspect its tools. Public discovery tools are available without a key. Authenticated data uses each user's own ParlayAPI key in their private client's `PARLAYAPI_KEY` environment configuration.
 - Scope: personal and internal research. The code's MIT license does not grant API data redistribution rights. See the [API terms](https://parlay-api.com/terms) and [privacy policy](https://parlay-api.com/privacy).
 
@@ -20,7 +20,7 @@ Copyable keyless local-client configuration:
   "mcpServers": {
     "parlayapi": {
       "command": "uvx",
-      "args": ["--from", "parlayapi-mcp==0.3.5", "parlayapi-mcp"]
+      "args": ["--from", "parlayapi-mcp==0.3.6", "parlayapi-mcp"]
     }
   }
 }
@@ -75,7 +75,7 @@ npx -y @lobehub/market-cli@0.0.41 plugin publish \
   --dir "$lobehub_repo_dir" --output json
 ```
 
-For an existing listing, reconcile its actual identifier and repository first. Claim it only if needed, then use `plugin update --dir "$lobehub_repo_dir"`. Updating version `0.3.5` merges supplied fields into that version; do not invent a new package version just for a metadata correction.
+For an existing listing, reconcile its actual identifier and repository first. Claim it only if needed, then use `plugin update --dir "$lobehub_repo_dir"`. Updating version `0.3.6` merges supplied fields into that version; do not invent a new package version just for a metadata correction.
 
 After publication, confirm the owned listing and public page. Check the identifier, repository, version, capability counts and installation command. Repository enrichment is asynchronous; a successful command alone is not proof of a working public install. Stop on an incorrect package, generated remote endpoint or authentication configuration instead of repeatedly resubmitting.
 
