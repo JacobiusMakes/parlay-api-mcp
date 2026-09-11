@@ -15,7 +15,7 @@ The template enables no --online flag, API key, write permissions, SARIF upload,
 
 ## Local results and open findings
 
-Pinned verification exits 1: it expects .codex-plugin/plugin.json, which this standalone MCP server does not declare, and skips stdio execution for safety. The weighted scan exits 0 but scores 56/100, below the 80 threshold; exit 0 alone is not a passing admission result. It reports no high/critical findings. Rule findings:
+Pinned verification exits 1: it expects .codex-plugin/plugin.json, which this standalone MCP server does not declare, and skips stdio execution for safety. The initial weighted scan exits 0 but scores 56/100. After adding SECURITY.md and Dependabot configuration, the score is 63/100, still below the 80 threshold. Exit 0 alone is not a passing admission result. Neither scan reports high/critical findings, and optional deep MCP scanning was unavailable. Rule findings:
 
 - PLUGIN_JSON_MISSING / PLUGIN_JSON_INVALID / PLUGIN_JSON_REQUIRED_FIELDS_UNCHECKED: scanner classifies this source as a Codex plugin. Maintainer review should establish the appropriate MCP ecosystem route; adding fictitious package metadata is not a remediation.
 - DEPENDENCY_LOCKFILE_MISSING: reproducible dependency locking remains outstanding.
