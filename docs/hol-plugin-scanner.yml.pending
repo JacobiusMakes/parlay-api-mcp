@@ -1,0 +1,28 @@
+name: HOL Plugin Scanner
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      # Action pins plugin-scanner 2.0.1116 and verifies its wheel hash/provenance.
+      - uses: hashgraph-online/ai-plugin-scanner-action@55616c962cf86368423f7673b2ecdfdbe613d1af # v1.2.515
+        with:
+          mode: verify
+          plugin_dir: .
+          format: text
+          min_score: 80
+          fail_on_severity: high
+          online: 'false'
+          upload_sarif: 'false'
+          pr_comment: 'off'
+          submission_enabled: 'false'
