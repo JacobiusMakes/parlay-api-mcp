@@ -22,7 +22,7 @@ Pinned verification exits 1: it expects .codex-plugin/plugin.json, which this st
 - SECURITY_MD_MISSING / DEPENDABOT_MISSING: addressed by this change; private reporting follows the existing README, and dependency updates are grouped weekly.
 - CODEXIGNORE_MISSING: Codex-specific informational finding, pending ecosystem clarification.
 
-The template is intentionally outside `.github/workflows` and does not run in CI until upstream confirms a supported standalone MCP target. No findings are suppressed. No passing badge is claimed. Local verification is not a hosted CI run; no hosted success is claimed. Existing account billing restrictions must be resolved before relying on new hosted runs. No runtime MCP server execution or account-data request was performed in this check.
+The template is intentionally outside `.github/workflows` and does not run in CI until upstream confirms a supported standalone MCP target. No findings are suppressed. No passing HOL badge or hosted HOL verification is claimed. No runtime MCP server execution or account-data request was performed in this local scanner check. The repository's separate container validation remains independent of HOL verification.
 
 References: https://github.com/hashgraph-online/awesome-ai-plugins/pull/235#issuecomment-5585054591 and https://github.com/hashgraph-online/awesome-ai-plugins/blob/main/SCANNER_GUIDE.md .
 
