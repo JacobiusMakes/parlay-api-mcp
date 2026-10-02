@@ -19,7 +19,9 @@ jobs:
       - name: Verify non-root runtime
         run: test "$(docker image inspect --format '{{.Config.User}}' parlayapi-mcp:check)" = '10001:10001'
       - name: Install protocol test client
-        run: python3 -m pip install 'mcp==2.1.1'
+        run: python3 -m pip install 'mcp==2.1.1' 'httpx==0.28.1'
+      - name: Check checkout credential handoff without live requests
+        run: python3 -m unittest discover -s scripts -p 'test_checkout_handoff.py' -v
       - name: Discover tools with no network or credentials
         run: python3 scripts/check_container.py
       - name: Clean up test container and image

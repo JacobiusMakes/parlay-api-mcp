@@ -89,11 +89,11 @@ def current_api_key() -> str:
     return _REQUEST_API_KEY.get() or API_KEY
 
 
-def _client(needs_key: bool = True) -> httpx.Client:
+def _client(needs_key: bool = True, *, optional_key: bool = False) -> httpx.Client:
     headers = {"User-Agent": f"parlayapi-mcp/{_VERSION}"}
-    if needs_key:
+    if needs_key or optional_key:
         key = current_api_key()
-        if not key:
+        if needs_key and not key:
             # ToolError, not RuntimeError: SDK 2.x masks unexpected tool
             # exceptions ("Error executing tool ..."), and this message IS
             # the product surface that tells a keyless agent what to do.
@@ -105,7 +105,8 @@ def _client(needs_key: bool = True) -> httpx.Client:
                 "MCP server config. "
                 "No key yet? Call parlayapi_signup() to create a free-tier key."
             )
-        headers["X-API-KEY"] = key
+        if key:
+            headers["X-API-KEY"] = key
     return httpx.Client(base_url=BASE_URL, headers=headers, timeout=20.0)
 
 
@@ -148,11 +149,14 @@ def parlayapi_signup(
 
 @mcp.tool()
 def parlayapi_checkout_link(email: str, tier: str = "pro") -> dict[str, Any]:
-    """Generate a Stripe Checkout URL the user can click to upgrade.
+    """Request an owner-authenticated checkout URL or an email-link flow.
 
+    A configured key is forwarded for the backend to verify account ownership.
+    With no matching key, the backend returns an email-flow acknowledgement
+    rather than a checkout URL. That response does not confirm email delivery.
     Use parlayapi_get_pricing for current tiers and prices.
     """
-    with _client(needs_key=False) as c:
+    with _client(needs_key=False, optional_key=True) as c:
         r = c.post("/v1/agent/checkout-link", json={"email": email, "tier": tier})
         r.raise_for_status()
         return r.json()

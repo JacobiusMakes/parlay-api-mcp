@@ -32,9 +32,11 @@ the bundle version and validation performed. Open the downloaded file
 Desktop unpacks the bundle and runs the server with its managed uv
 runtime, so no terminal or Python setup is needed.
 
-Python package 0.3.7 is a documentation update. The separately released
-0.3.6 desktop bundle has the same server implementation and corrected tool
-descriptions. Check the release page above for newer desktop bundles.
+The 0.3.8 Python package source forwards an available account key for checkout
+ownership validation and distinguishes a checkout URL from an email-flow
+acknowledgement. An acknowledgement does not confirm email delivery.
+The separately pinned 0.3.6 desktop bundle does not include this checkout fix.
+Check the release page above for newer desktop bundles.
 
 The API key field in the install dialog is optional. Leave it blank to
 start keyless: signup, pricing, live previews, source quality, and
@@ -49,10 +51,10 @@ The bundle source lives in [`mcpb/`](mcpb/). Rebuild it with
 
 ```bash
 # Start the stdio server (normally launched by your MCP client):
-uvx --from parlayapi-mcp==0.3.7 parlayapi-mcp
+uvx --from parlayapi-mcp==0.3.8 parlayapi-mcp
 
 # Or install globally with pip:
-pip install parlayapi-mcp==0.3.7
+pip install parlayapi-mcp==0.3.8
 ```
 
 ## Configure your MCP client

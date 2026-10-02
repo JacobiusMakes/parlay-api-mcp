@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.8
+
+- Forward an available configured or per-request API key when requesting a checkout link. Account ownership remains validated by the backend; keyless requests retain the existing email flow.
+- Clarify that an email-flow acknowledgement does not prove email delivery. Other keyless tools continue to omit the configured key.
+- Add offline checkout regression tests and align the Python package and registry metadata with 0.3.8.
+
+This change preserves the standalone server's other tools and qualified arbitrage descriptions. The separately pinned 0.3.6 desktop bundle is not rebuilt and does not include this checkout fix.
+
 ## 0.3.7
 
 - Point the packaged README to the latest desktop release and its `-directory.mcpb` asset, so later desktop releases do not leave PyPI readers on a fixed older download.
