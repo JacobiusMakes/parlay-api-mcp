@@ -1,7 +1,7 @@
 {
   "name": "parlayapi-mcp",
   "display_name": "ParlayAPI",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Sports odds, player props, source coverage and analysis tools for AI assistants. Public discovery works without a key; full data uses your own ParlayAPI account.",
   "homepage": "https://parlay-api.com/mcp",
   "documentation": "https://parlay-api.com/docs",
@@ -51,7 +51,7 @@
   },
   "tools": [
     {"name": "parlayapi_signup", "auth": "none", "description": "Create a free-tier account and return API key plus claim URL."},
-    {"name": "parlayapi_checkout_link", "auth": "none", "description": "Generate a Stripe upgrade URL for any tier."},
+    {"name": "parlayapi_checkout_link", "auth": "none", "description": "Request an owner-authenticated checkout URL or an email flow; acknowledgement does not confirm delivery."},
     {"name": "parlayapi_magic_link", "auth": "none", "description": "Email a passwordless login link."},
     {"name": "parlayapi_get_pricing", "auth": "none", "description": "Return current public pricing and credit tiers."},
     {"name": "parlayapi_live_sports", "auth": "none", "description": "List active live sports, event counts, and book counts."},
