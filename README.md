@@ -23,6 +23,8 @@ URL for the dashboard, and a Stripe upgrade URL the user can click.
 Then it calls `parlayapi_get_odds()`, `parlayapi_get_props()`, etc.
 directly.
 
+For a first request, [check one sport on the public board](docs/first-board-check.md). The guide includes a runnable Python example and a prompt for your MCP client. Both use one public tool without an API key.
+
 ## Install in Claude Desktop
 
 Open the [latest desktop release](https://github.com/JacobiusMakes/parlay-api-mcp/releases/latest)
